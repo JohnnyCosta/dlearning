@@ -13,17 +13,7 @@ public class IntegerNANDGate implements InputCalculate<Integer>  {
     GenericPerceptron<Integer> p;
 
     public IntegerNANDGate() {
-        p = new GenericPerceptron<Integer>(Arrays.asList(-2, -2), 3, 0, in -> {
-            if (in <= 0) {
-                return 0;
-            } else {
-                return 1;
-            }
-        }, (v1, v2) -> {
-            return v1 * v2;
-        }, (v1, v2) -> {
-            return v1 + v2;
-        });
+        p = new GenericPerceptron<Integer>(Arrays.asList(-2, -2), 3, 0, in -> (in <= 0) ? 0:1, (a, b) -> a * b, (a, b) -> a + b);
 
     }
 
