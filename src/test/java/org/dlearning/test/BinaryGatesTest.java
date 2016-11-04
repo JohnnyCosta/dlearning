@@ -3,10 +3,12 @@ package org.dlearning.test;
 import lombok.extern.slf4j.Slf4j;
 import org.dlearning.IntegerNANDGate;
 import org.dlearning.IntegerXORGate;
+import org.dlearning.SigmoidNeuron;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 
 /**
@@ -15,7 +17,7 @@ import java.util.List;
  * @author : Joao Costa (joaocarlosfilho@gmail.com) on 04/11/2016.
  */
 @Slf4j
-public class SimplePerceptronTest {
+public class BinaryGatesTest {
     @Test
     public void testAPerceptron() {
 
@@ -59,6 +61,24 @@ public class SimplePerceptronTest {
         Assert.assertEquals(1,xgr2.intValue());
         Assert.assertEquals(1,xgr3.intValue());
         Assert.assertEquals(0,xgr4.intValue());
+
+        // Sigmoid neuron
+        List<Double> sx1 = Arrays.asList(0d, 0d);
+        List<Double> sx2 = Arrays.asList(0d, 1d);
+        List<Double> sx3 = Arrays.asList(1d, 0d);
+        List<Double> sx4 = Arrays.asList(1d, 1d);
+
+        SigmoidNeuron sneuron = new SigmoidNeuron(Arrays.asList(-2d, -2d),3d);
+        Double sr1 = sneuron.calculate(sx1);
+        Double sr2 = sneuron.calculate(sx2);
+        Double sr3 = sneuron.calculate(sx3);
+        Double sr4 = sneuron.calculate(sx4);
+
+        log.info("Sigmoid");
+        log.info("For input 1 '{}' produces '{}'", sx1, sr1);
+        log.info("For input 2 '{}' produces '{}'", sx2, sr2);
+        log.info("For input 3 '{}' produces '{}'", sx3, sr3);
+        log.info("For input 4 '{}' produces '{}'", sx4, sr4);
 
     }
 

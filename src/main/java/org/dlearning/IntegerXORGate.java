@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author : Joao Costa (joaocarlosfilho@gmail.com) on 04/11/2016.
  */
-public class IntegerXORGate {
+public class IntegerXORGate implements InputCalculate<Integer>{
 
     IntegerNANDGate g1;
     IntegerNANDGate g2;
@@ -22,6 +22,7 @@ public class IntegerXORGate {
         g4 = new IntegerNANDGate();
     }
 
+    @Override
     public Integer calculate(List<Integer> x) {
         assert x.size() == 2;
         Integer a = x.get(0);

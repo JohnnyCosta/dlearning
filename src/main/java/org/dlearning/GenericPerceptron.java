@@ -9,16 +9,22 @@ import java.util.function.UnaryOperator;
  *
  * @author : Joao Costa (joaocarlosfilho@gmail.com) on 04/11/2016.
  */
-public class SimplePerceptron<T> {
+public class GenericPerceptron<T> implements InputCalculate<T>  {
 
-    private List<T> w;
-    private UnaryOperator<T> f;
-    private BinaryOperator<T> m;
-    private BinaryOperator<T> s;
-    private T b;
-    private T init;
+    //  Weight
+    protected List<T> w;
+    // Perceptron Function
+    protected UnaryOperator<T> f;
+    // Multiplication Function
+    protected BinaryOperator<T> m;
+    // Sum Function
+    protected BinaryOperator<T> s;
+    // Bias value
+    protected T b;
+    // Identity init
+    protected T init;
 
-    public SimplePerceptron(List<T> weights, T bias, T identity, UnaryOperator<T> function, BinaryOperator<T> mult, BinaryOperator<T> sum) {
+    public GenericPerceptron(List<T> weights, T bias, T identity, UnaryOperator<T> function, BinaryOperator<T> mult, BinaryOperator<T> sum) {
         w = weights;
         f = function;
         m = mult;
@@ -27,6 +33,7 @@ public class SimplePerceptron<T> {
         init = identity;
     }
 
+    @Override
     public T calculate(List<T> x) {
         assert (w.size() > 0);
         assert (w.size() == x.size());
