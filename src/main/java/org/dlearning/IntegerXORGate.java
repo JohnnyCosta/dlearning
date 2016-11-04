@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Create a XOR gate with a perceptron
+ * Create a XOR gate with 4 NAND based perceptron
  *
  * @author : Joao Costa (joaocarlosfilho@gmail.com) on 04/11/2016.
  */
