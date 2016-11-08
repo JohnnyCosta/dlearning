@@ -38,12 +38,16 @@ public class GenericPerceptron<T> implements InputCalculate<T>  {
         assert (w.size() > 0);
         assert (w.size() == x.size());
 
-        T vecmulti = init;
-        for (int i = 0; i < w.size(); i++) {
-            vecmulti = s.apply(vecmulti, m.apply(x.get(i), w.get(i)));
-        }
+        // X . W + b
+        return f.apply(s.apply(dotProduct(x,w), b));
+    }
 
-        return f.apply(s.apply(vecmulti, b));
+    protected T dotProduct(List<T> x,List<T> y) {
+        T vecmulti = init;
+        for (int i = 0; i <x.size(); i++) {
+            vecmulti = s.apply(vecmulti, m.apply(x.get(i), y.get(i)));
+        }
+        return vecmulti;
     }
 
 
