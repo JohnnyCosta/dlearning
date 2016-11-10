@@ -83,30 +83,55 @@ public class BinaryGatesTest {
 
         // Multilayer perceptron
 
+//        List<List<List<Double>>> weights = new ArrayList<>();
+//        List<List<Double>> layer1 = new ArrayList<>();
+//        layer1.add(Arrays.asList(1d, 2d,3d));
+//        layer1.add(Arrays.asList(1d, 2d,3d));
+//        layer1.add(Arrays.asList(1d, 2d,3d));
+//        layer1.add(Arrays.asList(1d, 2d,3d));
+//        weights.add(layer1);
+//        List<List<Double>> layer2 = new ArrayList<>();
+//        layer2.add(Arrays.asList(1d, 2d,3d,4d));
+//        layer2.add(Arrays.asList(1d, 2d,3d,4d));
+//        weights.add(layer2);
+////        List<List<Double>> layer3 = new ArrayList<>();
+////        layer3.add(Arrays.asList(1d, 2d));
+////        layer3.add(Arrays.asList(1d, 2d));
+////        weights.add(layer3);
+//        List<List<Double>> bias = new ArrayList<>();
+//        bias.add(Arrays.asList(1d, 2d, 3d, 4d));
+//        bias.add(Arrays.asList(1d, 2d));
+////        bias.add(Arrays.asList(1d, 2d));
+//
+//        List layers = Arrays.asList(3, 4,2);
+//
+//        MultiLayerPerceptron mlp = new MultiLayerPerceptron(layers, weights, bias);
+//        List<Double> mx1 = Arrays.asList(-1d, 2d, 2d);
+//        List<Double> out1 = mlp.calculate(mx1);
+//
+//        log.info("Multilayer perceptron with size '{}'",layers);
+//        for (int i=0;i<weights.size();i++){
+//            log.info ("Layer '{}' weights '{}'",i,weights.get(i));
+//        }
+//        log.info("Bias '{}'",bias);
+//        log.info("For input 1 '{}' produces '{}'", mx1, out1);
+
         List<List<List<Double>>> weights = new ArrayList<>();
         List<List<Double>> layer1 = new ArrayList<>();
-        layer1.add(Arrays.asList(1d, 2d,3d));
-        layer1.add(Arrays.asList(1d, 2d,3d));
-        layer1.add(Arrays.asList(1d, 2d,3d));
-        layer1.add(Arrays.asList(1d, 2d,3d));
+        layer1.add(Arrays.asList(0.1,0.8));
+        layer1.add(Arrays.asList(0.4,0.6));
         weights.add(layer1);
         List<List<Double>> layer2 = new ArrayList<>();
-        layer2.add(Arrays.asList(1d, 2d,3d,4d));
-        layer2.add(Arrays.asList(1d, 2d,3d,4d));
+        layer2.add(Arrays.asList(0.3,0.9));
         weights.add(layer2);
-//        List<List<Double>> layer3 = new ArrayList<>();
-//        layer3.add(Arrays.asList(1d, 2d));
-//        layer3.add(Arrays.asList(1d, 2d));
-//        weights.add(layer3);
         List<List<Double>> bias = new ArrayList<>();
-        bias.add(Arrays.asList(1d, 2d, 3d, 4d));
-        bias.add(Arrays.asList(1d, 2d));
-//        bias.add(Arrays.asList(1d, 2d));
+        bias.add(Arrays.asList(0d, 0d));
+        bias.add(Arrays.asList(0d));
 
-        List layers = Arrays.asList(3, 4,2);
+        List layers = Arrays.asList(2, 2,1);
 
         MultiLayerPerceptron mlp = new MultiLayerPerceptron(layers, weights, bias);
-        List<Double> mx1 = Arrays.asList(2d, 2d, 2d);
+        List<Double> mx1 = Arrays.asList(0.35, 0.9);
         List<Double> out1 = mlp.calculate(mx1);
 
         log.info("Multilayer perceptron with size '{}'",layers);
