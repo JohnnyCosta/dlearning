@@ -5,7 +5,7 @@ import org.apache.commons.math3.analysis.function.Sigmoid;
 import java.util.List;
 
 /**
- * Sigmoid  neuron based on a perceptron
+ * Sigmoid  function
  *
  * @author : Joao Costa (joaocarlosfilho@gmail.com) on 04/11/2016.
  */

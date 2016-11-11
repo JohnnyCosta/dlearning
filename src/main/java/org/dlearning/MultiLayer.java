@@ -6,16 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Sigmoid  neuron based on a perceptron
+ * Multi-layer of neurons based on a perceptron
  *
  * @author : Joao Costa (joaocarlosfilho@gmail.com) on 04/11/2016.
  */
 @Slf4j
-public final class MultiLayerPerceptron {
+public final class MultiLayer {
     private List<List<InputCalculate<Double>>> layers;
     private List<Integer> sizes;
 
-    public MultiLayerPerceptron(List<Integer> layersSize, List<List<List<Double>>> weight, List<List<Double>> bias) {
+    public MultiLayer(List<Integer> layersSize, List<List<List<Double>>> weight, List<List<Double>> bias) {
         assert layersSize.size() > 2;
         this.sizes = layersSize;
 
@@ -46,16 +46,11 @@ public final class MultiLayerPerceptron {
             List<InputCalculate<Double>> nodes = new ArrayList<>();
 
             for (int row = 0; row < currentNum; row++) {
-                List<Double> nodeWeights = new ArrayList<>(prevNum); // Each neuron should have be connected to previous nodes size (weight)
                 List<List<Double>> layerWeights = weight.get(hioutLayerIdx);
 
-
-//                if (hioutLayerIdx < sizes.size() - 2) {
-                    nodes.add(new SigmoidNeuron(layerWeights.get(row), bias.get(hioutLayerIdx).get(row)));
-//                } else { // Output layer with a softmax with need all layer weights and bias
-//                    nodes.add(new SoftmaxNeuron(layerWeights, bias.get(hioutLayerIdx), row));
-//                }
+                nodes.add(new SigmoidNeuron(layerWeights.get(row), bias.get(hioutLayerIdx).get(row)));
             }
+
             layers.add(nodes);
         }
     }
