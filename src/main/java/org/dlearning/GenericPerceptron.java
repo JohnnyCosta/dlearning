@@ -38,7 +38,7 @@ public class GenericPerceptron<T> implements InputCalculate<T>  {
         assert (w.size() > 0);
         assert (w.size() == x.size());
 
-        // X . W + b
+        // (X . W) + b
         return f.apply(s.apply(dotProduct(x,w), b));
     }
 

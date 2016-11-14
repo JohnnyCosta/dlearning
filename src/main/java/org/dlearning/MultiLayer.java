@@ -55,15 +55,17 @@ public final class MultiLayer {
         }
     }
 
-    public List<Double> calculate(List<Double> x) {
+    public List<List<Double>> calculate(List<Double> x) {
         assert sizes.get(0) == x.size();
+
+        List<List<Double>> out = new ArrayList<>(layers.size());
 
         List<Double> input = x;
         for (int layerIdx = 0; layerIdx < layers.size(); layerIdx++) {
             input = calculate(input, layerIdx);
-            log.info("Output of layer '{}' is '{}'", layerIdx, input);
+            out.add(input);
         }
-        return input;
+        return out;
     }
 
     private List<Double> calculate(List<Double> x, Integer layerIdx) {
