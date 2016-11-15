@@ -178,7 +178,7 @@ public final class NeuralNetwork {
                 totalerror += FastMath.abs(error);
 
                 // Backpass
-                for (int layer = sizes.size() - 1; layer < 0; layer++) {
+                for (int layer = 0; layer < sizes.size() - 1; layer++) {
                     for (int j = 0; j < sizes.get(layer + 1); j++) {
                         Double deltaj = calculateDelta(j, layer, output, t.getOuput());
 
