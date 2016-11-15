@@ -44,7 +44,7 @@ public class NNTests {
                         Arrays.asList(0.01, 0.99)));
 
 
-        nn.train(trainings, 0.5, 0.0000000000001, 100000000);
+        nn.train(trainings, 0.5, 0.0001, 10000);
 
         List<List<Double>> nnout = nn.calculate(Arrays.asList(0.05, 0.10));
 
@@ -81,12 +81,12 @@ public class NNTests {
                         Arrays.asList(0d, 1d))
         );
 
-        trainings.add(
-                // Input
-                new <Double>Training(Arrays.asList(1d, 0d),
-                        // Expected output
-                        Arrays.asList(1d, 0d))
-        );
+//        trainings.add(
+//                // Input
+//                new <Double>Training(Arrays.asList(1d, 0d),
+//                        // Expected output
+//                        Arrays.asList(1d, 0d))
+//        );
 //        trainings.add(
 //                // Input
 //                new <Double>Training(Arrays.asList(1d, 0d),

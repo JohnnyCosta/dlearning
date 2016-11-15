@@ -177,18 +177,10 @@ public final class NeuralNetwork {
                 error = FastMath.abs(error);
                 totalerror += FastMath.abs(error);
 
-//                log.info("Local error: '{}'", error);
-
                 // Backpass
-                for (int layer = 0; layer < sizes.size() - 1; layer++) {
-//                log.info("Layer '{}'", layer);
-//                log.info("===========");
+                for (int layer = sizes.size() - 1; layer < 0; layer++) {
                     for (int j = 0; j < sizes.get(layer + 1); j++) {
                         Double deltaj = calculateDelta(j, layer, output, t.getOuput());
-
-//                    log.info("Neuron j: '{}'", j);
-//                    log.info("-------------");
-//                    log.info("Delta: '{}'", deltaj);
 
                         List<Double> wj = w.get(layer).get(j);
                         for (int i = 0; i < wj.size(); i++) {
@@ -204,8 +196,6 @@ public final class NeuralNetwork {
 
                             wji = wji - rate * deltaj * oj;
 
-//                        log.info("Weight: '{}'", wj);
-
                             wj.set(i, wji);
                         }
                     }
@@ -215,7 +205,6 @@ public final class NeuralNetwork {
             if (iter == 0) {
                 log.info("Initial total error: '{}'", totalerror);
             }
-//            log.info("Total error: '{}'", totalerror);
 
             if (totalerror.doubleValue() <= abort) {
                 cont = false;
