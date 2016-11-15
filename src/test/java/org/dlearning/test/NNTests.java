@@ -19,7 +19,7 @@ public class NNTests {
 
     @Test
     public void simpleNetwork() {
-        log.info("Neural network");
+        log.info("Simple Neural network");
         List<List<List<Double>>> nnweights = new ArrayList<>();
         List<List<Double>> nnlayer1 = new ArrayList<>();
         nnlayer1.add(Arrays.asList(0.15, 0.20));
@@ -48,29 +48,16 @@ public class NNTests {
 
         List<List<Double>> nnout = nn.calculate(Arrays.asList(0.05, 0.10));
 
-        for (int i = 0; i < nnout.size(); i++) {
-            log.info("Output of layer '{}' is '{}'", i, nnout.get(i));
-        }
+        log.info("Output  is '{}'", nnout.get(nnout.size()-1));
     }
 
     @Test
     public void trainSimplePattern() {
-        log.info("Neural network");
-        List<List<List<Double>>> nnweights = new ArrayList<>();
-        List<List<Double>> nnlayer1 = new ArrayList<>();
-        nnlayer1.add(Arrays.asList(0.1, 0.1));
-        nnlayer1.add(Arrays.asList(0.1, 0.1));
-        nnweights.add(nnlayer1);
-        List<List<Double>> nnlayer2 = new ArrayList<>();
-        nnlayer2.add(Arrays.asList(0.1, 0.1));
-        nnlayer2.add(Arrays.asList(0.1, 0.1));
-        nnweights.add(nnlayer2);
+        log.info("Neural network with Simple Pattern");
 
-        List nnlayers = Arrays.asList(2, 2, 2);
+        List nnlayers = Arrays.asList(2, 2, 1);
 
-        List bias = Arrays.asList(.35, .60);
-
-        NeuralNetwork nn = new NeuralNetwork(nnlayers,null,null, true);
+        NeuralNetwork nn = new NeuralNetwork(nnlayers, null, null, true);
 
         List<Training<Double>> trainings = new ArrayList<>();
 
@@ -78,24 +65,18 @@ public class NNTests {
                 // Input
                 new <Double>Training(Arrays.asList(0d, 1d),
                         // Expected output
-                        Arrays.asList(0d, 1d))
+                        Arrays.asList(0d))
         );
 
-//        trainings.add(
-//                // Input
-//                new <Double>Training(Arrays.asList(1d, 0d),
-//                        // Expected output
-//                        Arrays.asList(1d, 0d))
-//        );
-//        trainings.add(
-//                // Input
-//                new <Double>Training(Arrays.asList(1d, 0d),
-//                        // Expected output
-//                        Arrays.asList(1d, 0d))
-//        );
+        trainings.add(
+                // Input
+                new <Double>Training(Arrays.asList(1d, 0d),
+                        // Expected output
+                        Arrays.asList(1d))
+        );
 
 
-        nn.train(trainings, 0.5, 0.001, 500000);
+        nn.train(trainings, 0.5, 0.01, 1000000);
 
         List<List<List<Double>>> currentWeights = nn.getCurrentWeights();
 
@@ -105,17 +86,17 @@ public class NNTests {
 
         List<List<Double>> nnout = nn.calculate(Arrays.asList(0d, 1d));
 
-        log.info("Output  is '{}'", nnout.get(1));
+        log.info("Output  is '{}'", nnout.get(nnout.size()-1));
 
         nnout = nn.calculate(Arrays.asList(1d, 0d));
 
-        log.info("Output  is '{}'", nnout.get(1));
+        log.info("Output  is '{}'", nnout.get(nnout.size()-1));
 
     }
 
     @Test
     public void trainMoreComplexPattern() {
-        log.info("Neural network");
+        log.info("Neural network with a more complex pattern");
         List<List<List<Double>>> nnweights = new ArrayList<>();
         List<List<Double>> nnlayer1 = new ArrayList<>();
         nnlayer1.add(Arrays.asList(1d, 1d, 1d, 1d));
@@ -127,9 +108,9 @@ public class NNTests {
         nnlayer2.add(Arrays.asList(0.1, 0.1, 0.1));
         nnweights.add(nnlayer2);
 
-        List nnlayers = Arrays.asList(4, 3, 2);
+        List nnlayers = Arrays.asList(4, 4,4, 2);
 
-        NeuralNetwork nn = new NeuralNetwork(nnlayers, nnweights,null, true);
+        NeuralNetwork nn = new NeuralNetwork(nnlayers, null, null, true);
 
         List<Training<Double>> trainings = new ArrayList<>();
         trainings.add(
@@ -140,24 +121,19 @@ public class NNTests {
         );
         trainings.add(
                 // Input
-                new <Double>Training(Arrays.asList(0d, 1d, 0d, 1d),
+                new <Double>Training(Arrays.asList(0d, 1d, 1d, 0d),
                         // Expected output
-                        Arrays.asList(0d, 0d))
-        );
-        trainings.add(
-                // Input
-                new <Double>Training(Arrays.asList(1d, 0d, 1d, 0d),
-                        // Expected output
-                        Arrays.asList(1d, 1d))
+                        Arrays.asList(0d, 1d))
         );
 
+        nn.train(trainings, 1.5, 0.01, 1000000);
 
-        nn.train(trainings, 0.5, 0.000001, 100000);
+        List<List<Double>> nnout = nn.calculate(Arrays.asList(1d, 0d, 0d, 1d));
 
-        List<List<Double>> nnout = nn.calculate(Arrays.asList(0d, 1d, 1d, 0d));
+        log.info("Output  is '{}'", nnout.get(nnout.size()-1));
 
-        for (int i = 0; i < nnout.size(); i++) {
-            log.info("Output of layer '{}' is '{}'", i, nnout.get(i));
-        }
+        nnout = nn.calculate(Arrays.asList(0d, 1d, 1d, 0d));
+
+        log.info("Output  is '{}'", nnout.get(nnout.size()-1));
     }
 }

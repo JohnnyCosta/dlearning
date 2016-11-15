@@ -182,21 +182,24 @@ public final class NeuralNetwork {
                     for (int j = 0; j < sizes.get(layer + 1); j++) {
                         Double deltaj = calculateDelta(j, layer, output, t.getOuput());
 
+                        // Update
                         List<Double> wj = w.get(layer).get(j);
                         for (int i = 0; i < wj.size(); i++) {
 
-                            Double wji = wj.get(i);
+                            Double wij = wj.get(i);
 
-                            Double oj = 0.d;
+                            Double oi = 0.d;
                             if (layer == 0) {
-                                oj = (Double) t.getInput().get(j);
+                                oi = (Double) t.getInput().get(i);
                             } else {
-                                oj = output.get(layer - 1).get(j);
+                                oi = output.get(layer-1).get(j);
                             }
 
-                            wji = wji - rate * deltaj * oj;
+                            double deltawij = - rate * deltaj * oi;
 
-                            wj.set(i, wji);
+                            wij +=  deltawij;
+
+                            wj.set(i, wij);
                         }
                     }
                 }
@@ -218,7 +221,9 @@ public final class NeuralNetwork {
     }
 
     private Double calculateDelta(int j, int layer, List<List<Double>> layersOut, List<Double> outLayerExpected) {
+
         assert layer < sizes.size();
+
         Double oj = (Double) layersOut.get(layer).get(j);
         Double sum = 0d;
         if (layer == sizes.size() - 2) {
@@ -226,7 +231,9 @@ public final class NeuralNetwork {
             sum = (oj - tj);
         } else {
             for (int l = 0; l < sizes.get(layer + 2); l++) {
-                sum += calculateDelta(l, layer + 1, layersOut, outLayerExpected) * w.get(layer).get(l).get(j);
+                double delta = calculateDelta(l, layer + 1, layersOut, outLayerExpected);
+                double weight = w.get(layer+1).get(l).get(j);
+                sum += delta * weight;
             }
         }
 
