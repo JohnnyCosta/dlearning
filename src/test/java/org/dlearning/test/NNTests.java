@@ -68,6 +68,7 @@ public class NNTests {
                         Arrays.asList(0d))
         );
 
+
         trainings.add(
                 // Input
                 new <Double>Training(Arrays.asList(1d, 0d),
@@ -75,11 +76,14 @@ public class NNTests {
                         Arrays.asList(1d))
         );
 
-
-        nn.train(trainings, 0.5, 0.01, 1000000);
-
         List<List<List<Double>>> currentWeights = nn.getCurrentWeights();
+        for (List<List<Double>> lw : currentWeights) {
+            log.info(lw.toString());
+        }
 
+        nn.trainBatch(trainings, 1, 0.01, 10000);
+
+        currentWeights = nn.getCurrentWeights();
         for (List<List<Double>> lw : currentWeights) {
             log.info(lw.toString());
         }
@@ -126,7 +130,7 @@ public class NNTests {
                         Arrays.asList(0d, 1d))
         );
 
-        nn.train(trainings, 1.5, 0.01, 1000000);
+        nn.train(trainings, 1.5, 0.01, 100000);
 
         List<List<Double>> nnout = nn.calculate(Arrays.asList(1d, 0d, 0d, 1d));
 

@@ -192,12 +192,12 @@ public final class NeuralNetwork {
                             if (layer == 0) {
                                 oi = (Double) t.getInput().get(i);
                             } else {
-                                oi = output.get(layer-1).get(j);
+                                oi = output.get(layer - 1).get(j);
                             }
 
-                            double deltawij = - rate * deltaj * oi;
+                            double deltawij = -rate * deltaj * oi;
 
-                            wij +=  deltawij;
+                            wij += deltawij;
 
                             wj.set(i, wij);
                         }
@@ -220,6 +220,96 @@ public final class NeuralNetwork {
         log.info("Final total error : '{}'", totalerror);
     }
 
+    public void trainBatch(List<Training<Double>> trainings, double rate, double abort, int maxIter) {
+
+        assert trainings.size() > 0;
+
+        int iter = 0;
+        Double totalerror = 0.d;
+        boolean cont = true;
+        while (iter < maxIter && cont) {
+            totalerror = 0d;
+
+            List<List<List<Double>>> accumulator = new ArrayList<>(trainings.size());
+
+            for (Training t : trainings) {
+                assert (t.getInput().size() == sizes.get(0));
+                assert (t.getOuput().size() == sizes.get(sizes.size() - 1));
+
+                // Forward pass
+                List<List<Double>> output = calculate(t.getInput());
+
+                Double error = 0.d;
+                List<Double> outLayer = output.get(output.size() - 1);
+                for (int i = 0; i < outLayer.size(); i++) {
+
+                    error += FastMath.pow((Double) t.getOuput().get(i) - outLayer.get(i), 2) / 2;
+                }
+                error = FastMath.abs(error);
+                totalerror += FastMath.abs(error);
+
+                List<List<Double>> currentTrainingDeltas = new ArrayList<>(sizes.size() - 1);
+                // Backpass
+                for (int layer = 0; layer < sizes.size() - 1; layer++) {
+                    List<Double> layerDeltas = new ArrayList<>(sizes.get(layer + 1));
+                    for (int j = 0; j < sizes.get(layer + 1); j++) {
+                        Double deltaj = calculateDelta(j, layer, output, t.getOuput());
+                        layerDeltas.add(deltaj);
+                    }
+                    currentTrainingDeltas.add(layerDeltas);
+                }
+                accumulator.add(currentTrainingDeltas);
+            }
+
+            // Update weights
+            int trainIndx = 0;
+            for (List<List<Double>> deltas : accumulator) {
+                Training t = trainings.get(trainIndx);
+                for (int layer = 0; layer < sizes.size() - 1; layer++) {
+                    for (int j = 0; j < sizes.get(layer + 1); j++) {
+                        Double deltaj = deltas.get(layer).get(j);
+
+                        List<List<Double>> output = calculate(t.getInput());
+
+                        // Update
+                        List<Double> wj = w.get(layer).get(j);
+                        for (int i = 0; i < wj.size(); i++) {
+
+                            Double wij = wj.get(i);
+
+                            Double oi = 0.d;
+                            if (layer == 0) {
+                                oi = (Double) t.getInput().get(i);
+                            } else {
+                                oi = output.get(layer - 1).get(j);
+                            }
+
+                            double deltawij = -rate * deltaj * oi;
+
+                            wij += deltawij;
+
+                            wj.set(i, wij);
+                        }
+                    }
+                }
+                trainIndx++;
+            }
+
+
+            if (iter == 0) {
+                log.info("Initial total error: '{}'", totalerror);
+            }
+            log.info("Iteration {} error: '{}'", iter + 1, totalerror);
+            if (totalerror.doubleValue() <= abort) {
+                cont = false;
+            }
+            iter++;
+
+        }
+        log.info("Finished on iteration : '{}'", iter);
+        log.info("Final total error : '{}'", totalerror);
+    }
+
     private Double calculateDelta(int j, int layer, List<List<Double>> layersOut, List<Double> outLayerExpected) {
 
         assert layer < sizes.size();
@@ -232,7 +322,7 @@ public final class NeuralNetwork {
         } else {
             for (int l = 0; l < sizes.get(layer + 2); l++) {
                 double delta = calculateDelta(l, layer + 1, layersOut, outLayerExpected);
-                double weight = w.get(layer+1).get(l).get(j);
+                double weight = w.get(layer + 1).get(l).get(j);
                 sum += delta * weight;
             }
         }
