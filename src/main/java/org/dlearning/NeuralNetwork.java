@@ -2,10 +2,13 @@ package org.dlearning;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.analysis.function.Sigmoid;
+import org.apache.commons.math3.analysis.function.Tanh;
 import org.apache.commons.math3.util.FastMath;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Multi-layer neural network
@@ -22,8 +25,74 @@ public final class NeuralNetwork {
 
     boolean bias;
 
-    public NeuralNetwork(List<Integer> layersSize, List<List<List<Double>>> weight) {
-        init(layersSize, weight);
+    boolean sigmoid;
+
+    public NeuralNetwork(List<Integer> layersSize, List<List<List<Double>>> weight, List<Double> bias, boolean sigmoid) {
+
+        List<List<List<Double>>> wg;
+        if (weight == null) {
+            wg = genRandomWeights(layersSize);
+        } else {
+            wg = weight;
+        }
+
+        init(layersSize, wg);
+
+        if (bias != null) {
+            initBias(bias);
+        }
+
+        this.sigmoid = sigmoid;
+    }
+
+    private List<List<List<Double>>> genRandomWeights(List<Integer> layersSize) {
+
+        List<List<List<Double>>> w = new ArrayList<>(layersSize.size() - 1);
+
+        Random r = new Random();
+
+        for (int i = 0; i < layersSize.size() - 1; i++) {
+
+            // Remove 4* if not sigmoid
+            int nIn = layersSize.get(i);
+            int nOut = layersSize.get(i + 1);
+
+            double fanin = -FastMath.sqrt(6. / (nIn + nOut));
+            double fanout = FastMath.sqrt(6. / (nIn + nOut));
+
+            if (sigmoid) {
+                fanin = 4 * fanin;
+                fanout = 4 * fanout;
+            }
+
+
+            List<List<Double>> lw = new ArrayList<>(nOut);
+
+            for (int j = 0; j < nOut; j++) {
+                List<Double> nw = new ArrayList<>(nIn);
+
+                for (int k = 0; k < nIn; k++) {
+                    nw.add(ThreadLocalRandom.current().nextDouble(fanin, fanout));
+                }
+
+                lw.add(nw);
+            }
+
+            w.add(lw);
+        }
+
+        return w;
+    }
+
+
+    private void initBias(List<Double> bias) {
+        assert bias.size() == sizes.size() - 1;
+        b = bias;
+        this.bias = true;
+    }
+
+    public List<List<List<Double>>> getCurrentWeights() {
+        return w;
     }
 
     private void init(List<Integer> layersSize, List<List<List<Double>>> weight) {
@@ -46,15 +115,6 @@ public final class NeuralNetwork {
         bias = false;
     }
 
-    public NeuralNetwork(List<Integer> layersSize, List<List<List<Double>>> weight, List<Double> bias) {
-        init(layersSize, weight);
-
-        assert bias.size() == layersSize.size() - 1;
-
-        b = bias;
-
-        this.bias = true;
-    }
 
     public List<List<Double>> calculate(List<Double> x) {
         assert sizes.get(0) == x.size();
@@ -84,7 +144,11 @@ public final class NeuralNetwork {
                 oj += b.get(layerIdx);
             }
 
-            out.add(new Sigmoid().value(oj));
+            if (sigmoid) {
+                out.add(new Sigmoid().value(oj));
+            } else {
+                out.add(new Tanh().value(oj));
+            }
         }
         return out;
     }
@@ -92,30 +156,30 @@ public final class NeuralNetwork {
     public void train(List<Training<Double>> trainings, double rate, double abort, int maxIter) {
 
         int iter = 0;
-        Double error = 0.d;
+        Double totalerror = 0.d;
         boolean cont = true;
         while (iter < maxIter && cont) {
-            iter++;
+            totalerror = 0d;
+
             for (Training t : trainings) {
                 assert (t.getInput().size() == sizes.get(0));
                 assert (t.getOuput().size() == sizes.get(sizes.size() - 1));
 
+                // Forward pass
                 List<List<Double>> output = calculate(t.getInput());
 
-                error = 0.d;
+                Double error = 0.d;
                 List<Double> outLayer = output.get(output.size() - 1);
                 for (int i = 0; i < outLayer.size(); i++) {
 
                     error += FastMath.pow((Double) t.getOuput().get(i) - outLayer.get(i), 2) / 2;
                 }
+                error = FastMath.abs(error);
+                totalerror += FastMath.abs(error);
 
-//                log.info("Current error: '{}'", error);
+//                log.info("Local error: '{}'", error);
 
-                if ( error.doubleValue() <= abort) {
-                    cont = false;
-                    break;
-                }
-
+                // Backpass
                 for (int layer = 0; layer < sizes.size() - 1; layer++) {
 //                log.info("Layer '{}'", layer);
 //                log.info("===========");
@@ -147,9 +211,21 @@ public final class NeuralNetwork {
                     }
                 }
             }
+
+            if (iter == 0) {
+                log.info("Initial total error: '{}'", totalerror);
+            }
+//            log.info("Total error: '{}'", totalerror);
+
+            if (totalerror.doubleValue() <= abort) {
+                cont = false;
+            }
+
+            iter++;
+
         }
         log.info("Finished on iteration : '{}'", iter);
-        log.info("Error : '{}'", error);
+        log.info("Final total error : '{}'", totalerror);
     }
 
     private Double calculateDelta(int j, int layer, List<List<Double>> layersOut, List<Double> outLayerExpected) {
